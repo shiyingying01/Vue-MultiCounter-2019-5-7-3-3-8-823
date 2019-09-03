@@ -2,26 +2,36 @@
   <div id="app">
     <img alt="Vue logo" src="./assets/logo.png" />
     <br />
-    <input v-model="countNum" />
-    <Counter v-for="n in getNum()"
+    <input v-model="countNum" v-on:changeInput="changeInput"/>
+    <!-- <Counter v-for="n in getNum()"
      v-bind:key="n" 
      v-bind:index="n" 
      v-on:getSum="count"
-     />
-    {{sum}}
+    />-->
+    <CounterGroup v-for="n in getNum()" v-bind:key="n" 
+    v-bind:index="n" 
+    v-bind:value="getNumByIndex(i)" 
+    v-on:update="updateList" />
+    {{getSum()}}
   </div>
 </template>
 
 <script>
-import Counter from "./components/Counter.vue";
+//import Counter from "./components/Counter.vue";
+import CounterGroup from "./components/CounterGroup.vue";
 
 export default {
   name: "app",
   data() {
     return {
-      countNum: 0,
-      sum:0
+      countNum:0,
+      inputNum: 0,
+      sum:0,
+      counts: []
     };
+  },
+  components: {
+    CounterGroup
   },
   methods: {
     getNum: function() {
@@ -36,12 +46,38 @@ export default {
       return !isNaN(parseFloat(n) && isFinite(n));
     },
 
-    count: function(e) {
-      this.sum = this.sum + e;
+    updateList: function(param) {
+      let oldCounter = this.counts;
+      oldCounter[param.index] = param.value;
+      this.counts = [];
+      for (let i = 0; i<oldCounter.length;i++){
+        this.counts.push(this.oldCounter[i]);
+      }
+    },
+
+changeInput(){
+      let inputNum = this.getNum();
+      while (inputNum > this.counts.length) {
+        this.counts.push(this.counts.length - 1);
+      }
+      while (inputNum < this.counts.length) {
+        this.counts.pop();
+      }
+    },
+
+    getNumByIndex(index){
+      return this.counts[index-1];
+    },
+
+    getSum(){
+      for(let i of this.counts){
+        this.sum+=i;
+      }
     }
-  },
-  components: {
-    Counter
+
+    // count: function(e) {
+    //   this.sum = this.sum + e;
+    // }
   }
 };
 </script>
